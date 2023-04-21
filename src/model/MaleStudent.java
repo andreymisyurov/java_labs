@@ -6,8 +6,8 @@ public class MaleStudent extends Student {
     private int SPEED = 9;
     private int SIZE = 12;
 
-    public MaleStudent(int in_x, int in_y) {
-        super(in_x, in_y, Color.BLUE);
+    public MaleStudent(int in_x, int in_y, long birthTime, long lifeTime, int in_id) {
+        super(in_x, in_y, Color.BLUE, birthTime, lifeTime, in_id);
     }
 
     @Override

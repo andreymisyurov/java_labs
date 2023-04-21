@@ -2,15 +2,14 @@ package data;
 
 import model.Student;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
-// класс синглтон, для хранения даных(студентов)
 public class Singleton {
     private static Singleton instance;
-    private static ArrayList<Student> studList;
+    private static LinkedList<Student> studList;
 
     private Singleton() {
-        studList = new ArrayList<Student>();
+        studList = new LinkedList<Student>();
     }
 
     public static Singleton getInstance() {
@@ -20,7 +19,7 @@ public class Singleton {
         return instance;
     }
 
-    public static ArrayList<Student> getStudList() {
+    public static LinkedList<Student> getStudList() {
         return studList;
     }
 }

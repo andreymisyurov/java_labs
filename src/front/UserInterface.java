@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 public class UserInterface {
 
     public static void createUI(Habitat habitat, JFrame frame) {
-        // добавляем верхний menu-bar и прослушивание нажатия на элементы меню бара
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("menu");
         JMenuItem playMenuItem = new JMenuItem("Play");
@@ -37,22 +36,13 @@ public class UserInterface {
             }
         });
 
-
-        // создаем кнопки которые в правой части экрана
         JButton button1 = new JButton("start");
         JButton button2 = new JButton("stop");
 
-        // создаем радиобаттон(переключатель)
         JRadioButton showTimeRadioButton = new JRadioButton("Show simulation time");
         JRadioButton hideTimeRadioButton = new JRadioButton("Hide simulation time");
 
-        // костылек, чтобы ебрать повторное нажатие на элементы радио-баттона
-        // создаем массив с одним единственным элементом, меняем этот элемент в обработчиках радио-баттона
-        // почему массив я хз, обычная переменная не создавалась, думаю связано с тем что массив - это
-        // ссылочный тип данных, а переменная - приметивный. ну и переменная передается по значения, а массив по ссылке
-        // тем самым может меняться внутри функции
         final boolean[] check = {true};
-
         showTimeRadioButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (!check[0]) {
@@ -74,8 +64,6 @@ public class UserInterface {
         });
 
         showTimeRadioButton.setSelected(true);
-        // запихиваем радио-баттоны в ButtonGroup, чтобы они работали как селектор,
-        // при нажатии на один второй выключался
         ButtonGroup timeGroup = new ButtonGroup();
         timeGroup.add(showTimeRadioButton);
         timeGroup.add(hideTimeRadioButton);
@@ -94,9 +82,12 @@ public class UserInterface {
             }
         });
 
-        // создаем JPanel, это некий контейнер под всяческие виджеты кнопки и переключатели на UI
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
+
+
+        JLabel label_every_time_male = new JLabel("born every sec for male:");
+        JLabel label_every_time_female = new JLabel("born every sec for female:");
 
         JSlider slider = new JSlider(JSlider.HORIZONTAL, 1, 10, 2);
         slider.setMajorTickSpacing(20);
@@ -114,7 +105,6 @@ public class UserInterface {
             }
         });
 
-
         JSlider slider2 = new JSlider(JSlider.HORIZONTAL, 1, 10, 2);
         slider2.setMajorTickSpacing(20);
         slider2.setMinorTickSpacing(5);
@@ -131,13 +121,50 @@ public class UserInterface {
             }
         });
 
-        // добавляем на JPanel два только что созданных слайдера и добавляем его на основной frame
-        // спиннеры это ползунки для выставления раз во сколько секунд рождается студент
+        JLabel label_time_female = new JLabel("lifetime for male:");
+        JLabel label_time_male = new JLabel("lifetime female:");
+
+        JSlider slider_femalelife_time = new JSlider(JSlider.HORIZONTAL, 1, 15, 10);
+        slider_femalelife_time.setMajorTickSpacing(20);
+        slider_femalelife_time.setMinorTickSpacing(5);
+        slider_femalelife_time.setPaintTicks(true);
+        slider_femalelife_time.setPaintLabels(true);
+
+        slider_femalelife_time.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                JSlider source = (JSlider) e.getSource();
+                if (!source.getValueIsAdjusting()) {
+                    habitat.setLifeTimeFemale(source.getValue() * 1000);
+                }
+                habitat.requestFocusInWindow();
+            }
+        });
+
+        JSlider slider_malelife_time = new JSlider(JSlider.HORIZONTAL, 1, 15, 10);
+        slider_malelife_time.setMajorTickSpacing(20);
+        slider_malelife_time.setMinorTickSpacing(5);
+        slider_malelife_time.setPaintTicks(true);
+        slider_malelife_time.setPaintLabels(true);
+
+        slider_malelife_time.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                JSlider source = (JSlider) e.getSource();
+                if (!source.getValueIsAdjusting()) {
+                    habitat.setLifeTimeMale(source.getValue() * 1000);
+                }
+                habitat.requestFocusInWindow();
+            }
+        });
+        buttonPanel.add(label_every_time_male);
         buttonPanel.add(slider);
+        buttonPanel.add(label_every_time_female);
         buttonPanel.add(slider2);
+        buttonPanel.add(label_time_female);
+        buttonPanel.add(slider_femalelife_time);
+        buttonPanel.add(label_time_male);
+        buttonPanel.add(slider_malelife_time);
         frame.add(buttonPanel);
 
-        // слайдеры это два поле ввода под цифры которые отвечают за шанс рождения клетки
         JSpinner spinner1 = new JSpinner(new SpinnerNumberModel(80, 0, 100, 10));
         spinner1.setMaximumSize(new Dimension(80, 20));
         JLabel spinner1Label = new JLabel("chance for female born:");
@@ -145,11 +172,6 @@ public class UserInterface {
         JSpinner spinner2 = new JSpinner(new SpinnerNumberModel(70, 0, 100, 10));
         spinner2.setMaximumSize(new Dimension(80, 20));
         JLabel spinner2Label = new JLabel("chance for male born:");
-
-        // по заданию стоит обработка исключений. здесь важно пояснить что исключеия вы обработали тем самым,
-        // что ограничели ввод некорректных значений на этапе UI. то есть если попробовать ввести букву в поле то она
-        // не отправится. разрешен ввод только цифры от 0 до 100
-        // аналогично по слайдерами. нет возможности передать в программу данные кроме данных от 1 до 10
 
         spinner1.addChangeListener(e -> {
             habitat.setGenMaleChance((int) spinner1.getValue());
@@ -161,17 +183,11 @@ public class UserInterface {
             habitat.requestFocusInWindow();
         });
 
-
-        // setFocusable функция расставляющая "акцент" приоритет некоторой части UI
-        // чтобы работали клавиши с клавиатуры.
         spinner1Label.setFocusable(false);
         spinner1.setFocusable(false);
         spinner2Label.setFocusable(false);
         spinner2.setFocusable(false);
 
-
-
-        // создаем галочку, разрешающую показ модального окна при нажатии на клавишу Stop
         JCheckBox checkBox = new JCheckBox("Modal info window");
         checkBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -184,9 +200,6 @@ public class UserInterface {
             }
         });
         checkBox.setSelected(true);
-
-
-        // конструироуем JPanel это вся правая часть нашего интерфейса с кнопками.
 
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(spinner1Label);
@@ -222,7 +235,13 @@ public class UserInterface {
 
         buttonPanel.add(Box.createVerticalGlue());
 
-        // добавляем к основному фрейму нашу среду habitat и правую JPanel
+        // кнопка при нажатии на которую вываливаются пары ключ значение из MAP (id - время рождения)
+        JButton currentObjectsButton = new JButton("Alive obj");
+        currentObjectsButton.addActionListener(e -> {
+            habitat.showCurrentObjects();
+        });
+        buttonPanel.add(currentObjectsButton);
+
         frame.add(habitat);
         frame.add(buttonPanel, BorderLayout.EAST);
 
