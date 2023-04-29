@@ -2,7 +2,7 @@ package model;
 
 import java.awt.*;
 
-public abstract class Student implements IBehaviour {
+public abstract class Student {
     protected int m_x;
     protected int m_y;
     protected Color m_color;
@@ -20,7 +20,23 @@ public abstract class Student implements IBehaviour {
         m_id = in_id;
     }
 
-    public abstract void move(int in_weigth, int in_hight);
+    public void setX(int in_value) {
+        m_x = in_value;
+    }
+
+    public int getX() {
+        return m_x;
+    }
+
+    public void setY(int in_value) {
+        m_y = in_value;
+    }
+
+    public int getY() {
+        return m_y;
+    }
+
+//    public abstract void move(int in_weigth, int in_hight);
     public abstract void draw(Graphics in_gr);
 
     public int getId() {

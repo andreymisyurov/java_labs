@@ -8,7 +8,6 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-//import
 
 public class UserInterface {
 
@@ -235,12 +234,61 @@ public class UserInterface {
 
         buttonPanel.add(Box.createVerticalGlue());
 
-        // кнопка при нажатии на которую вываливаются пары ключ значение из MAP (id - время рождения)
         JButton currentObjectsButton = new JButton("Alive obj");
         currentObjectsButton.addActionListener(e -> {
             habitat.showCurrentObjects();
         });
         buttonPanel.add(currentObjectsButton);
+
+        // добавил некоторые кнопки
+        // для управления потоками и выбора приоритета
+
+        JButton pauseMaleAIButton = new JButton("stop MaleAI");
+        pauseMaleAIButton.addActionListener(e -> {
+            habitat.getMaleAI().pauseMoving();
+        });
+        buttonPanel.add(pauseMaleAIButton);
+
+        JButton resumeMaleAIButton = new JButton("run MaleAI");
+        resumeMaleAIButton.addActionListener(e -> {
+            habitat.getMaleAI().resumeMoving();
+        });
+        buttonPanel.add(resumeMaleAIButton);
+
+        JButton pauseFemaleAIButton = new JButton("stop FemaleAI");
+        pauseFemaleAIButton.addActionListener(e -> {
+            habitat.getFemaleAI().pauseMoving();
+        });
+        buttonPanel.add(pauseFemaleAIButton);
+
+        JButton resumeFemaleAIButton = new JButton("run FemaleAI");
+        resumeFemaleAIButton.addActionListener(e -> {
+            habitat.getFemaleAI().resumeMoving();
+        });
+        buttonPanel.add(resumeFemaleAIButton);
+
+        Integer[] priorities = new Integer[Thread.MAX_PRIORITY - Thread.MIN_PRIORITY + 1];
+        for (int i = Thread.MIN_PRIORITY; i <= Thread.MAX_PRIORITY; i++) {
+            priorities[i - Thread.MIN_PRIORITY] = i;
+        }
+
+        JComboBox<Integer> malePriorityComboBox = new JComboBox<>(priorities);
+        JComboBox<Integer> femalePriorityComboBox = new JComboBox<>(priorities);
+        malePriorityComboBox.addActionListener(e -> {
+            habitat.setPriorMale((int) malePriorityComboBox.getSelectedItem());
+        });
+
+        femalePriorityComboBox.addActionListener(e -> {
+            habitat.setPriorFemale((int) femalePriorityComboBox.getSelectedItem());
+        });
+        malePriorityComboBox.setSelectedItem(5);
+        femalePriorityComboBox.setSelectedItem(5);
+
+        buttonPanel.add(new JLabel("Male Priority:"));
+        buttonPanel.add(malePriorityComboBox);
+        buttonPanel.add(new JLabel("Female Priority:"));
+        buttonPanel.add(femalePriorityComboBox);
+
 
         frame.add(habitat);
         frame.add(buttonPanel, BorderLayout.EAST);
